@@ -1,37 +1,48 @@
 <template>
   <div class="elevators-wrap">
+    <floor-lines :maxFloor="maxFloor"/>
     <elevator-row 
       v-for="elevator in elevatorsList"
       :key="elevator.key"
-      :floor="elevator.floor"
-      :maxFloor="elevator.maxFloor" />
-    <buttons-row :maxFloor="maxFloor" />
+      :elevatorProps="elevator" />
+    <buttons-row 
+      :maxFloor="maxFloor" 
+      @btnClicked="setNewFloor" />
   </div>
 
 </template>
 
 <script>
+import FloorLines from "@ui/FloorLines.vue";
 import ElevatorRow from "@components/ElevatorRow.vue";
-import ElevatorsConfig from "@/views/ElevatorsPage/ElevatorsConfig";
 import ButtonsRow from "@components/ButtonsRow.vue";
+import ElevatorsConfig from "@/views/ElevatorsPage/ElevatorsConfig";
 
 export default {
   name: "ElevatorsPage",
-
-  components: { ElevatorRow, ButtonsRow },
-
+  components: { ElevatorRow, ButtonsRow, FloorLines },
   data() {
     return {
+      maxFloor: ElevatorsConfig.floors,
       elevatorsList: Array(ElevatorsConfig.elevators)
         .fill(null)
         .map((elem, index) => {
-          return { floor: 1, key: index, maxFloor: ElevatorsConfig.floors };
+          return { 
+            key: index, 
+            floor: 1, 
+            prevFloor: 1, 
+            transitionTime: ElevatorsConfig.passTime,
+            maxFloor: ElevatorsConfig.floors 
+          };
         }),
-      maxFloor: ElevatorsConfig.floors,
     };
   },
-
-  methods: {},
+  methods: {
+    setNewFloor(value) {
+      this.elevatorsList[0].prevFloor = this.elevatorsList[0].floor;
+      this.elevatorsList[0].floor = value;
+    }
+  },
 };
 </script>
 

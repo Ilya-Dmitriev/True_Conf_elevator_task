@@ -1,4 +1,5 @@
 export default {
   floors: 5,
-  elevators: 2,
+  elevators: 1,
+  passTime: 1,
 };

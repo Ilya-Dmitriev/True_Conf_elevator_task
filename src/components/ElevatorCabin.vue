@@ -1,12 +1,24 @@
 <template>
   <div
     class="elevator-cabin"
-    :style="{bottom: `${(100 / maxFloor) * (floor - 1)}%`, height: `${100 / maxFloor}%`}" 
+    :class="{ blinkingAnimation: animationON }"
+    :style="{
+      height: `${100 / elevatorProps.maxFloor}%`,
+      bottom: `${(100 / elevatorProps.maxFloor) * (elevatorProps.floor - 1)}%`, 
+      transition: `bottom ${transitionTime}s ease-in-out 0s`,
+      animationDelay:`${transitionTime}s`,
+    }" 
   >
-    <div class="indicator-top">
-      <div class="arrow-up"/>
-      <div class="arrow-down"/>
-      <div class="destination-num">{{floor}}</div>
+    <div 
+      v-if="animationON"
+      class="indicator">
+      <div 
+        v-if="(elevatorProps.prevFloor - elevatorProps.floor) < 0"
+        class="arrow-up"/>
+      <div 
+        v-if="(elevatorProps.prevFloor - elevatorProps.floor) > 0"
+        class="arrow-down"/>
+      <div class="destination-num">{{elevatorProps.floor}}</div>
     </div>
   </div>
 </template>
@@ -15,19 +27,39 @@
 export default {
   name: "ElevatorCabin",
   props: {
-    floor: {
-      type: Number,
+    elevatorProps: {
+      type: Object,
       required: true
     },
-    maxFloor: {
-      type: Number,
-      required: true
-    },
+  },
+  data() {
+    return {
+      animationON: false,
+    };
+  },
+  computed:{
+    transitionTime(){ 
+      return Math.abs(this.elevatorProps.floor - this.elevatorProps.prevFloor) * this.elevatorProps.transitionTime;
+    }
+  },
+  watch:{
+    "elevatorProps.floor"(){
+      this.triggerAnimation();
+    }
+  },
+  methods:{
+    triggerAnimation() {
+      this.animationON = true;
+      console.log(this.animationON);
+      setTimeout(() => {
+        this.animationON = false;
+      }, this.transitionTime * 1000 + 3000);
+    }
   }
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" scoped>  
   .elevator-cabin {
     width: 100%;
 
@@ -39,7 +71,7 @@ export default {
 
     background-color: aquamarine;
 
-    .indicator-top {
+    .indicator {
       width: 60%;
       min-width: 1.6rem;
       height: 15%;
@@ -54,13 +86,12 @@ export default {
       border-radius: 0.5rem;
 
       .arrow-up, .arrow-down{
-        width: .2rem;
+        width: .1rem;
         height: 1.4rem;
 
         position: relative;
 
         background-color: #000;
-        border-radius: 0.1rem;
 
         &::before, &::after{
           display: block;
@@ -68,10 +99,9 @@ export default {
 
           position: absolute;
 
-          width:.2rem;
+          width:.1rem;
           height:.7rem;
 
-          border-radius: 0.1rem;
           background-color: #000;
         }
       }
@@ -105,6 +135,30 @@ export default {
         font-size: 1.6rem;
         font-weight: bold;
       }
+    }
+  }
+
+  .blinkingAnimation {
+    animation-name: blinking;
+    animation-duration: 3s;
+    animation-iteration-count: 1;
+  }
+
+  @keyframes blinking {
+    from {
+      opacity: 1;
+    }
+    25% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+    75% {
+      opacity: 0.3;
+    }
+    to {
+      opacity: 1;
     }
   }
 </style>

@@ -1,10 +1,12 @@
 <template>
-  <div
-    v-for="index in maxFloor + 1"
-    :key="index"
-    class="floor-line"
-    :style="{ top: `${(100 / this.maxFloor) * (index - 1)}%` }"
-  />
+  <div class="floor-lines">
+    <div
+      v-for="index in maxFloor - 1"
+      :key="index"
+      class="floor-line"
+      :style="{ top: `${(100 / this.maxFloor) * index}%` }"
+    />
+  </div>
 </template>
 
 <script>
@@ -20,15 +22,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.floor-line {
-  height: 1px;
-
+.floor-lines{
   position: absolute;
-  right: -12px;
-  left: -12px;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  .floor-line {
+    height: 1px;
 
-  transform: translateY(-50%);
+    position: absolute;
+    right: 0;
+    left: 0;
 
-  background-color: rgba(0, 0, 0, 0.371);
+    transform: translateY(-50%);
+
+    background-color: rgba(0, 0, 0, 0.371);
+  }
 }
 </style>

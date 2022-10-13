@@ -1,21 +1,22 @@
 <template>
   <div class="buttons-row">
-    <my-checkbox 
+    <floor-button 
       v-for="index in maxFloor"
-      :key="index"
+      :key="maxFloor - index + 1"
+      :number="maxFloor - index + 1"
+      :active="false"
       class="elevator-button"
-      :style="{ top: `${(100 / maxFloor) * (index - 0.5)}%` }" />
-    <floor-lines :maxFloor="maxFloor" />
+      :style="{ top: `${(100 / maxFloor) * (index - 0.5)}%` }"
+      @cliked="value => $emit('btnClicked', value)"/>
   </div>
 </template>
 
 <script>
-import FloorLines from "@ui/FloorLines.vue";
-import MyCheckbox from "@ui/MyCheckbox.vue";
+import FloorButton from "@ui/FloorButton.vue";
 
 export default {
   name: "ButtonsRow",
-  components: { FloorLines, MyCheckbox },
+  components: { FloorButton },
   props: {
     maxFloor: {
       type: Number,
