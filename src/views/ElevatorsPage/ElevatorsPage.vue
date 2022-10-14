@@ -30,10 +30,24 @@ export default {
       maxFloor: ElevatorsConfig.floors,
       elevatorsNum: ElevatorsConfig.elevators,
       transitionTime: ElevatorsConfig.passTime,  
-      callsQueue: new UniQueue(),
-      buttonsList: Array(ElevatorsConfig.floors).fill(false),
-      elevatorsList: Array(ElevatorsConfig.elevators).fill(null).map(this.getNewElevator),
+      callsQueue: sessionStorage.getItem("callsQueue") 
+        ? new UniQueue(JSON.parse(sessionStorage.getItem("callsQueue")).queue) 
+        : new UniQueue([]),
+      buttonsList: sessionStorage.getItem("buttonsList") 
+        ? JSON.parse(sessionStorage.getItem("buttonsList")) 
+        : Array(ElevatorsConfig.floors).fill(false),
+      elevatorsList: sessionStorage.getItem("elevatorsList") 
+        ? JSON.parse(sessionStorage.getItem("elevatorsList")) 
+        : Array(ElevatorsConfig.elevators).fill(null).map(this.getNewElevator),
     };
+  },
+  mounted() {
+    this.elevatorsList.forEach(
+      (elevator) => {
+        elevator.free = true;
+        this.buttonsList[elevator.floor - 1] = false;
+        setTimeout(() => {this.sendElevator();}, 1000);
+      });
   },
   methods: {
     getNewElevator(elem, index)  {
@@ -54,6 +68,7 @@ export default {
       if(isUnlocked){
         this.callsQueue.add(newFloor);
         this.buttonsList[newFloor - 1] = true;
+        this.savePoint();
         this.sendElevator();
       }
     },
@@ -61,13 +76,16 @@ export default {
       const elevator = this.findNearestElevator(this.elevatorsList, this.callsQueue.first);
       if(elevator?.free &&  this.callsQueue.length > 0){
         const newFloor = this.callsQueue.take();
+        sessionStorage.setItem("callsQueue", JSON.stringify(this.callsQueue));
         this.setNewFloor(elevator, newFloor);
         elevator.free = false;
+        this.savePoint();
         setTimeout(() => {
           elevator.free = true;
           this.buttonsList[newFloor - 1] = false;
         }, elevator.transitionTime + elevator.restingTime);
         setTimeout(() => {
+          this.savePoint();
           this.sendElevator();
         }, elevator.transitionTime + elevator.restingTime + 50);
       };
@@ -96,6 +114,11 @@ export default {
         }
       });
       return nearestElevator;
+    },
+    savePoint(){
+      sessionStorage.setItem("callsQueue", JSON.stringify(this.callsQueue));
+      sessionStorage.setItem("buttonsList", JSON.stringify(this.buttonsList));
+      sessionStorage.setItem("elevatorsList", JSON.stringify(this.elevatorsList));
     },
   },
 };

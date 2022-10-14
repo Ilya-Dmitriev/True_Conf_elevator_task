@@ -1,6 +1,6 @@
 export class Queue {
-  constructor(){
-    this.queue = [];
+  constructor(array = []){
+    this.queue = array;
   }
 
   add(item){
@@ -25,8 +25,8 @@ export class Queue {
 }
 
 export class UniQueue extends Queue {
-  constructor(){
-    super();
+  constructor(...args){
+    super(...args);
   }
 
   add(item){

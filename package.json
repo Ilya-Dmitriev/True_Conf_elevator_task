@@ -7,8 +7,8 @@
   "scripts": {
     "build": "cross-env NODE_ENV=prod webpack --config webpack/webpack.config.js",
     "dev": "cross-env NODE_ENV=dev webpack --config webpack/webpack.config.js",
-    "serve": "cross-env NODE_ENV=dev SERV=true webpack serve --open --config webpack/webpack.config.js",
-    "start": "cross-env NODE_ENV=dev SERV=true webpack serve --config webpack/webpack.config.js",
+    "start": "cross-env NODE_ENV=dev SERV=true webpack serve --open --config webpack/webpack.config.js",
+    "serve": "cross-env NODE_ENV=dev SERV=true webpack serve --config webpack/webpack.config.js",
     "stats": "cross-env NODE_ENV=prod webpack --profile --json > stats.json && webpack-bundle-analyzer stats.json"
   },
   "devDependencies": {
