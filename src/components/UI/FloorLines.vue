@@ -1,5 +1,8 @@
 <template>
-  <div class="floor-lines">
+  <div 
+    class="floor-lines"
+    :style="{minHeight: `${this.maxFloor * 10}rem`}"
+  >
     <div
       v-for="index in maxFloor - 1"
       :key="index"

@@ -4,7 +4,7 @@
       v-for="index in maxFloor"
       :key="maxFloor - index + 1"
       :number="maxFloor - index + 1"
-      :active="false"
+      :active="buttonsState[maxFloor - index]"
       class="elevator-button"
       :style="{ top: `${(100 / maxFloor) * (index - 0.5)}%` }"
       @cliked="value => $emit('btnClicked', value)"/>
@@ -12,14 +12,16 @@
 </template>
 
 <script>
-import FloorButton from "@ui/FloorButton.vue";
 
 export default {
   name: "ButtonsRow",
-  components: { FloorButton },
   props: {
     maxFloor: {
       type: Number,
+      required: true,
+    },
+    buttonsState: {
+      type: Array,
       required: true,
     },
   },

@@ -1,22 +1,22 @@
 <template>
   <div
     class="elevator-cabin"
-    :class="{ blinkingAnimation: animationON }"
+    :class="{ blinkingAnimation: !elevatorProps.free }"
     :style="{
-      height: `${100 / elevatorProps.maxFloor}%`,
-      bottom: `${(100 / elevatorProps.maxFloor) * (elevatorProps.floor - 1)}%`, 
-      transition: `bottom ${transitionTime}s ease-in-out 0s`,
-      animationDelay:`${transitionTime}s`,
+      height: `${elevatorProps.cabinHeight}%`,
+      bottom: `${elevatorProps.cabinHeight * (elevatorProps.floor - 1)}%`, 
+      transition: `bottom ${elevatorProps.transitionTime}ms ease-in-out 0s`,
+      animationDelay:`${elevatorProps.transitionTime}ms`,
     }" 
   >
     <div 
-      v-if="animationON"
+      v-if="!elevatorProps.free"
       class="indicator">
       <div 
-        v-if="(elevatorProps.prevFloor - elevatorProps.floor) < 0"
+        v-if="elevatorProps.direction === 'up'"
         class="arrow-up"/>
       <div 
-        v-if="(elevatorProps.prevFloor - elevatorProps.floor) > 0"
+        v-if="elevatorProps.direction === 'down'"
         class="arrow-down"/>
       <div class="destination-num">{{elevatorProps.floor}}</div>
     </div>
@@ -32,30 +32,6 @@ export default {
       required: true
     },
   },
-  data() {
-    return {
-      animationON: false,
-    };
-  },
-  computed:{
-    transitionTime(){ 
-      return Math.abs(this.elevatorProps.floor - this.elevatorProps.prevFloor) * this.elevatorProps.transitionTime;
-    }
-  },
-  watch:{
-    "elevatorProps.floor"(){
-      this.triggerAnimation();
-    }
-  },
-  methods:{
-    triggerAnimation() {
-      this.animationON = true;
-      console.log(this.animationON);
-      setTimeout(() => {
-        this.animationON = false;
-      }, this.transitionTime * 1000 + 3000);
-    }
-  }
 };
 </script>
 
