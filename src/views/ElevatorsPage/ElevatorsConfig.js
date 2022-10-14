@@ -1,6 +1,6 @@
 export default {
-  floors: 5,
-  elevators: 1,
+  floors: 7,
+  elevators: 4,
   passTime: 1000,
   restTime: 3000,
 };

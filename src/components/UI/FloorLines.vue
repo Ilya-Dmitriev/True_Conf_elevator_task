@@ -1,7 +1,10 @@
 <template>
   <div 
     class="floor-lines"
-    :style="{minHeight: `${this.maxFloor * 10}rem`}"
+    :style="{
+      minHeight: `${this.maxFloor * 10}rem`, 
+      minWidth: `calc(${this.elevatorsNum * 12}rem + 44px)`
+    }"
   >
     <div
       v-for="index in maxFloor - 1"
@@ -20,6 +23,10 @@ export default {
       type: Number,
       required: true,
     },
+    elevatorsNum: {
+      type: Number,
+      required: true,
+    }
   },
 };
 </script>

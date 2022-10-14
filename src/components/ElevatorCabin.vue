@@ -38,6 +38,7 @@ export default {
 <style lang="scss" scoped>  
   .elevator-cabin {
     width: 100%;
+    min-height: 10rem;
 
     display: flex;
     flex-direction: column;

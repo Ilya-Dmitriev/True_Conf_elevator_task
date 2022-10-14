@@ -1,7 +1,7 @@
 <template>
   <div 
     class="elevator-row"
-    :style="{ minHeight: `${elevatorProps.maxFloor * 10}rem` }"
+    :style="{ minHeight: `${maxFloor * 10}rem` }"
   >
     <elevator-cabin :elevatorProps="elevatorProps"/>
   </div>
@@ -17,6 +17,10 @@ export default {
     elevatorProps: {
       type: Object,
       required: true,
+    },
+    maxFloor: {
+      type: Number,
+      required: true
     },
   },
 };

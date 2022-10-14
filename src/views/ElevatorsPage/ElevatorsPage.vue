@@ -1,10 +1,14 @@
 <template>
   <div class="elevators-wrap">
-    <floor-lines :maxFloor="maxFloor"/>
+    <floor-lines 
+      :maxFloor="maxFloor"
+      :elevatorsNum="elevatorsNum"
+    />
     <elevator-row 
       v-for="elevator in elevatorsList"
       :key="elevator.key"
-      :elevatorProps="elevator" />
+      :elevatorProps="elevator" 
+      :maxFloor="maxFloor"/>
     <buttons-row 
       :maxFloor="maxFloor"
       :buttonsState="buttonsList"
@@ -24,6 +28,7 @@ export default {
   data() {
     return {
       maxFloor: ElevatorsConfig.floors,
+      elevatorsNum: ElevatorsConfig.elevators,
       transitionTime: ElevatorsConfig.passTime,  
       callsQueue: new UniQueue(),
       buttonsList: Array(ElevatorsConfig.floors).fill(false),
@@ -42,15 +47,19 @@ export default {
         restingTime: ElevatorsConfig.restTime,
       };
     },
-    addFloorToQueue(value){
-      if(this.elevatorsList[0].floor !== value){
-        this.callsQueue.add(value);
-        this.buttonsList[value - 1] = true;
-        this.sendElevator(this.elevatorsList[0]);
+    addFloorToQueue(newFloor){
+      const isUnlocked = !this.elevatorsList.find((elevator) => {
+        return elevator.floor === newFloor;
+      });
+      if(isUnlocked){
+        this.callsQueue.add(newFloor);
+        this.buttonsList[newFloor - 1] = true;
+        this.sendElevator();
       }
     },
-    sendElevator(elevator){
-      if(elevator.free &&  this.callsQueue.length > 0){
+    sendElevator(){
+      const elevator = this.findNearestElevator(this.elevatorsList, this.callsQueue.first);
+      if(elevator?.free &&  this.callsQueue.length > 0){
         const newFloor = this.callsQueue.take();
         this.setNewFloor(elevator, newFloor);
         elevator.free = false;
@@ -59,7 +68,7 @@ export default {
           this.buttonsList[newFloor - 1] = false;
         }, elevator.transitionTime + elevator.restingTime);
         setTimeout(() => {
-          this.sendElevator(elevator);
+          this.sendElevator();
         }, elevator.transitionTime + elevator.restingTime + 50);
       };
     },
@@ -73,7 +82,21 @@ export default {
       }
       elevator.transitionTime = Math.abs(elevator.floor - newFloor) * this.transitionTime;
       elevator.floor = newFloor;
-    }
+    },
+    findNearestElevator(elevatorsList, newFloor){
+      let minDif = this.maxFloor;
+      let nearestElevator = undefined;
+      elevatorsList.forEach((elevator) => {
+        if (elevator.free){
+          let dif = Math.abs(elevator.floor - newFloor);
+          if (dif < minDif){
+            minDif = dif;
+            nearestElevator = elevator;
+          }
+        }
+      });
+      return nearestElevator;
+    },
   },
 };
 </script>
@@ -82,6 +105,8 @@ export default {
 .elevators-wrap {
   min-width: 100%;
   min-height: 100%;
+
+  position: relative;
 
   display: flex;
 }
